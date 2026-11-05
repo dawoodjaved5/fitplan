@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  function isOwner(userId) {
+    return request.auth != null && request.auth.uid == userId;
+  }
+
+  function validTask(task) {
+    return task.keys().hasAll(['title', 'done', 'createdAt'])
+      && task.keys().hasOnly(['title', 'done', 'createdAt'])
+      && task.title is string
+      && task.title.size() > 0
+      && task.title.size() <= 100
+      && task.done is bool
+      && task.createdAt is timestamp;
+  }
+
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      // The workout document is also stored directly at users/{uid}.
+      allow read, write: if isOwner(userId);
+
+      match /tasks/{taskId} {
+        allow read, delete: if isOwner(userId);
+        allow create: if isOwner(userId) && validTask(request.resource.data);
+        allow update: if isOwner(userId)
+          && validTask(request.resource.data)
+          && request.resource.data.createdAt == resource.data.createdAt;
+      }
+    }
+  }
+}
