@@ -14,18 +14,19 @@ export default function PhoneOtpScreen({ onBack }) {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!captchaContainer.current || verifier.current) return undefined;
+    if (confirmation || !captchaContainer.current) return undefined;
 
-    verifier.current = new RecaptchaVerifier(auth, captchaContainer.current, {
+    const currentVerifier = new RecaptchaVerifier(auth, captchaContainer.current, {
       size: "normal",
       "expired-callback": () => setError("The reCAPTCHA expired. Complete it again."),
     });
+    verifier.current = currentVerifier;
 
     return () => {
-      verifier.current?.clear();
-      verifier.current = null;
+      currentVerifier.clear();
+      if (verifier.current === currentVerifier) verifier.current = null;
     };
-  }, []);
+  }, [confirmation]);
 
   async function sendCode() {
     const normalizedPhone = phone.replace(/[\s()-]/g, "");
@@ -71,6 +72,12 @@ export default function PhoneOtpScreen({ onBack }) {
     }
   }
 
+  function changePhoneNumber() {
+    setConfirmation(null);
+    setCode("");
+    setError("");
+  }
+
   return (
     <View style={styles.screen}>
       <Text style={styles.title}>Phone number verification</Text>
@@ -97,6 +104,9 @@ export default function PhoneOtpScreen({ onBack }) {
             maxLength={6}
           />
           <Button title={busy ? "Verifying…" : "Verify code"} onPress={verifyCode} disabled={busy} />
+          <View style={styles.changeNumber}>
+            <Button title="Change phone number" onPress={changePhoneNumber} disabled={busy} />
+          </View>
         </>
       ) : (
         <>
@@ -132,6 +142,7 @@ const styles = StyleSheet.create({
   captcha: { minHeight: 78, alignSelf: "flex-start" },
   destination: { color: "#374151", marginBottom: 12 },
   back: { marginTop: 16, alignSelf: "flex-start" },
+  changeNumber: { marginTop: 12, alignSelf: "flex-start" },
   error: { color: "#B91C1C", lineHeight: 21, marginTop: 14 },
   result: { padding: 18, borderRadius: 12, backgroundColor: "#DCFCE7", marginBottom: 12 },
   successTitle: { color: "#166534", fontSize: 19, fontWeight: "800" },

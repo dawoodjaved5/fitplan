@@ -15,4 +15,5 @@ const firebaseConfig = {
 const appAlreadyExists = getApps().length > 0;
 const app = appAlreadyExists ? getApp() : initializeApp(firebaseConfig);
 
+export { app };
 export const db = getFirestore(app);
