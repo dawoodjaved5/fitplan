@@ -9,11 +9,18 @@ import PhoneOtpScreen from "./PhoneOtpScreen";
 
 export default function AuthScreen() {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [phoneOtp, setPhoneOtp] = useState(false);
+  const [phoneOtp, setPhoneOtp] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  if (phoneOtp) return <PhoneOtpScreen onBack={() => setPhoneOtp(false)} />;
+  if (phoneOtp) {
+    return (
+      <PhoneOtpScreen
+        onBack={() => setPhoneOtp(false)}
+        backLabel="Use email/password instead"
+      />
+    );
+  }
 
   async function submit() {
     try {
@@ -50,7 +57,7 @@ export default function AuthScreen() {
         title={isSignUp ? "Already have an account? Sign in" : "New here? Create account"}
         onPress={() => setIsSignUp(!isSignUp)}
       />
-      <Button title="Verify with phone OTP" onPress={() => setPhoneOtp(true)} />
+      <Button title="Use phone number instead" onPress={() => setPhoneOtp(true)} />
     </View>
   );
 }

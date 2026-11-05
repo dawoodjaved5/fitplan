@@ -3,7 +3,7 @@ import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 import { auth } from "../firebaseAuth";
 
-export default function PhoneOtpScreen({ onBack }) {
+export default function PhoneOtpScreen({ onBack, backLabel = "Back" }) {
   const captchaContainer = useRef(null);
   const verifier = useRef(null);
   const [phone, setPhone] = useState("");
@@ -127,7 +127,7 @@ export default function PhoneOtpScreen({ onBack }) {
 
       {error ? <Text accessibilityRole="alert" style={styles.error}>{error}</Text> : null}
       <View style={styles.back}>
-        <Button title="Back" onPress={onBack} />
+        <Button title={backLabel} onPress={onBack} />
       </View>
     </View>
   );

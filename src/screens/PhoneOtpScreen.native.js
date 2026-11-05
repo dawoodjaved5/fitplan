@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { getAuth, onAuthStateChanged, signInWithPhoneNumber } from "@react-native-firebase/auth";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
-export default function PhoneOtpScreen({ onBack }) {
+export default function PhoneOtpScreen({ onBack, backLabel = "Back to email sign-in" }) {
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
   const [confirmation, setConfirmation] = useState(null);
@@ -104,7 +104,7 @@ export default function PhoneOtpScreen({ onBack }) {
       )}
 
       {error ? <Text accessibilityRole="alert" style={styles.error}>{error}</Text> : null}
-      <ActionButton title="Back to email sign-in" onPress={onBack} secondary />
+      <ActionButton title={backLabel} onPress={onBack} secondary />
     </View>
   );
 }
